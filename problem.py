@@ -20,17 +20,18 @@ class Problem():
 
 	def display(self):
 		print("----------------------------------------------------------")
-		print("Difficulty :",self.difficulty)
-		print("Threshold :",self.threshold)
-		print("Topic :",self.topic)
+		# print("Topic :",self.topic)
 		print(self.question_text)
 		print("Options")
 		print("A :"+self.options["A"] , "\tB :"+self.options["B"], "\tC :"+self.options["C"] , "\tD :"+self.options["D"])		
+		print("Difficulty :",self.difficulty)
+		print("Threshold :",self.threshold)		
 		print("----------------------------------------------------------")	
 # load problem from file.
 #display problem
 # display details of problem		
-
+	def __str__(self):
+		return "Question : " + self.question_text + " \n"
 if __name__=="__main__":
 	p = Problem("./problems/problem1.json")
 	p.load_problem()

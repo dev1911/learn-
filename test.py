@@ -10,13 +10,13 @@ class Test():
 	def construct_test(self , paths=None , folder=None):
 		if folder:
 			for root,dir,files in os.walk(folder):
-				print("Root :",root , "\tDir :",dir,"\tFiles :",files)
+				# print("Root :",root , "\tDir :",dir,"\tFiles :",files)
 				problems = []
 				for file in files:
 					problems.append(Problem(os.path.join(root,file)))
 			for prob in problems:
 				prob.load_problem()
-				prob.display()	
+				# prob.display()	
 			self.problems = problems	
 
 		else:
@@ -25,13 +25,16 @@ class Test():
 				prob = Problem(path)
 				prob.load_problem()
 				problems.append(prob)
-			for prob in problems:
-				prob.display()
+			# for prob in problems:
+			# 	prob.display()
 			self.problems = problems				
 
 
 
 if __name__ == "__main__":
 	test_ = Test()
-	# test_.construct_test(folder="./problems")
-	test_.construct_test(paths=["./problems/problem1.json" , "./problems/problem2.json"])					
+	test_.construct_test(folder="./problems")
+	# test_.construct_test(paths=["./problems/problem1.json" , "./problems/problem2.json"])		
+	# print(test_.__dict__)	
+	for q in test_.problems:
+		print(q)		
