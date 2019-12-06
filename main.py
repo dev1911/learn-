@@ -1,9 +1,23 @@
-import problem , topic , learner , test
+import problem , topic , learner , test , realtime
+import threading
+import time
+from timeloop import Timeloop
+from datetime import timedelta
 problem_paths=[]
 problem_folder = "./problems"
 global_time =0 
+time_interval = 0.5
 
+print("1. Enter 0 for manual time tracking\n2. Enter 1 for real time tracking")
+real_time = int(input())
+if real_time:
+	time_interval = float(input("Enter time interval :"))
 
+tl = Timeloop()
+test_ = test.Test()
+test_.construct_test(folder=problem_folder)
+student = learner.Learner(test_)
+f = open("log.txt","w+")
 def start_loop():
 	"""
 	Callback
@@ -21,13 +35,57 @@ def end_loop():
 	# print("Global Time :",global_time)
 	
 
+@tl.job(interval = timedelta(seconds = time_interval))
+def callback():
+	# print(".")
+	global student
+	student.increment_time(time_interval = time_interval)
+	# student.display_review_queue()
+	# global f
+	# f.write(str(student.display_review_queue()) + "\n")
+
+
 # Main entry point of the script
 def main():
-	print("1. Enter 0 for manual time tracking\n2. Enter 1 for real time tracking")
-	real_time = int(input())
-
+	
+	global student
 	if real_time:
-		pass
+		global time_interval
+		global student		
+
+		print("Enter 'A','B','C','D' to answer a question\nEnter 'start' to start :" ) 
+		ip = input("Enter input :")
+		if ip == "start":
+			tl.start() # Start a new job
+		while True:
+			curr_prob = student.next_question()
+			if curr_prob:
+				curr_prob.display()
+				question_start_time = time.time()
+				ip = input("Enter answer :")
+				question_end_time = time.time()
+				question_time = question_end_time - question_start_time
+				f.write("Question answered\n")
+				student.answer(curr_prob , ip , question_time)
+
+			else:
+				print("Test completed")
+				tl.stop()  # Stop the job
+				for i in range(student.no_of_problems):
+					student.show_question_graph(i , save=True , display=False)
+					student.show_decay_rate_graph(i , save=True , display=False)
+					# student.show_time_graph(i , save=True , display=False)
+					# student.show_no_of_review_events_graph(i , save=True , display=False)
+
+				student.show_overall_score_graph()	
+				break
+			# print("Scores")
+			# print(student.__dict__)
+			print(list(student.scores))
+			# print(student.display_review_queue())
+			
+
+
 	else:
 		# Time is tracked here.
 		question_time=0
@@ -96,10 +154,12 @@ def main():
 			# print("GLOBAL TIME ",global_time)
 			end_loop()
 
+		student.show_overall_score_graph()
+		for i in range(student.no_of_problems):
+			student.show_question_graph(i)
 			
 
 if __name__ == "__main__":
 	main()
-
 
 
