@@ -17,7 +17,7 @@ tl = Timeloop()
 test_ = test.Test()
 test_.construct_test(folder=problem_folder)
 student = learner.Learner(test_)
-f = open("log.txt","w+")
+# f = open("log.txt","w+")
 def start_loop():
 	"""
 	Callback
@@ -65,7 +65,7 @@ def main():
 				ip = input("Enter answer :")
 				question_end_time = time.time()
 				question_time = question_end_time - question_start_time
-				f.write("Question answered\n")
+				# f.write("Question answered\n")
 				student.answer(curr_prob , ip , question_time)
 
 			else:
