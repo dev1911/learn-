@@ -1,1 +1,1 @@
-{"question_text":"2nd question","options":{"A":"A","B":"B","C":"C","D":"D"},"answer":"A","difficulty":10,"threshold":10,"topic":"Calculus"}
+{"problem_no":2,"question_text":"2nd question","options":{"A":"A","B":"B","C":"C","D":"D"},"answer":"A","difficulty":10,"threshold":10,"topic":"Calculus","prerequisites":[1],"prerequisite_weights":[5]}

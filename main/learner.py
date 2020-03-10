@@ -8,6 +8,7 @@ class Learner():
 
 	def __init__(self , test):
 		self.problems_list = test.problems
+		self.adjacency_matrix = test.adj_matrix
 		self.no_of_problems = len(self.problems_list)
 
 		self.scores = np.zeros(shape = self.no_of_problems , dtype=float)
@@ -26,6 +27,9 @@ class Learner():
 		
 		self.probability = 1
 		self.overall_score = 0
+
+		self.increment_constant = 0.1
+		self.decrement_constant = 0.1
 
 	#TODO correct formula
 	def calculate_score(self , problem , correct , time):
@@ -141,7 +145,6 @@ class Learner():
 		Checks scores of questions and adds question to review queue if score is below threshold
 		Updates priorities of questions in review queue
 		"""
-		# print("*********** TIME INCREMENT ***************")
 		for i in range(self.no_of_problems):
 			if self.scores[i]==0 and self.decay_rates[i]==0:
 				continue
@@ -156,7 +159,7 @@ class Learner():
 		
 		self.check_scores()
 		self.update_review_queue()		
-		self.update_probability()
+		# self.update_probability()
 		# self.display_state()
 
 	def calculate_overall_score(self):
@@ -203,12 +206,12 @@ class Learner():
 		print(queue)	
 		# return queue
 
-	#TODO 
+	#TODO probability goes from 0 to 0.5 based on progress made in the test
 	def update_probability(self):
 		"""
 		Function to dynamically adjust the probability of occurence of a review event
 		"""
-		self.probability = 0.5
+		self.probability = (self.latest_question_index)/(self.no_of_problems * 0.5) * 0.5 
 
 	def next_question(self):
 		"""
@@ -216,8 +219,6 @@ class Learner():
 
 		Checks if review event is to be scheduled and returns appropriate question 
 		"""
-		# print("Learner next question ")
-
 		if self.latest_question_index >= self.no_of_problems - 1 and len(self.review_queue) == 0:
 			return None
 
@@ -256,6 +257,33 @@ class Learner():
 		print("Review events\n",self.no_review_events)
 		print("Review queue \n",self.review_queue)
 
+	def update_prerequisites_score(self , problem , score , correct):
+		"""
+		Updates scores of related problems
+
+		Parameters:
+		problem : Type Problem  : Problem whose related problems' scores are to be changed
+		score   : int           : Score of the problem
+		correct : boolean       : 1 if answer was correct. 0 if it was wrong
+		"""
+		if "prerequisites" not in problem.__dict__.keys():
+			return None
+		# Increase score of predecessors if right answer
+		if correct:
+			idx = 0
+			for prob_no in problem.prerequisites:
+				score_increment = problem.prerequisite_weights[idx] * score * self.increment_constant
+				print("Increasing score of question " + str(prob_no) + " by " + str(score_increment))
+				self.scores[prob_no - 1] += score_increment
+
+		#Decrease score of sucessors if wrong answer
+		else:
+			idx = problem.problem_no - 1
+			for j in range(self.latest_question_index):
+				score_decrement = self.adjacency_matrix[j][idx] * score * self.decrement_constant
+				print("Decreasing score of question " + str(j) + " by " + str(score_decrement))
+				self.scores[j] -= score_decrement
+			
 	def answer(self , problem , ans , time):
 		"""
 		Updates scores and decay rates based on a response
@@ -267,9 +295,12 @@ class Learner():
 		"""
 		if ans == problem.answer:
 			score = self.calculate_score(problem,1,time)
+			self.update_probability()
+			self.update_prerequisites_score(problem , score , 1)
 			print("Correct answer!")
 		else:
 			score = self.calculate_score(problem,0,time)
+			self.update_prerequisites_score(problem , score , 0)
 			print("Wrong answer!")
 		decay_rate = self.calculate_decay_rate(score,self.no_review_events[self.curr_question_index])
 		self.update_score(self.curr_question_index , score)

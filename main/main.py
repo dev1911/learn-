@@ -16,6 +16,8 @@ if real_time:
 tl = Timeloop()
 test_ = test.Test()
 test_.construct_test(folder=problem_folder)
+test_.generate_graph()
+test_.display_adj_matrix()
 student = learner.Learner(test_)
 # f = open("log.txt","w+")
 def start_loop():
@@ -40,10 +42,7 @@ def callback():
 	# print(".")
 	global student
 	student.increment_time(time_interval = time_interval)
-	# student.display_review_queue()
-	# global f
-	# f.write(str(student.display_review_queue()) + "\n")
-
+	# print(student.scores)
 
 # Main entry point of the script
 def main():

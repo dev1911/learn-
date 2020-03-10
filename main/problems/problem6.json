@@ -1,1 +1,1 @@
-{"question_text":"6th question","options":{"A":"A","B":"B","C":"C","D":"D"},"answer":"A","difficulty":5,"threshold":20,"topic":"Matrices"}
+{"problem_no":6,"question_text":"6th question","options":{"A":"A","B":"B","C":"C","D":"D"},"answer":"A","difficulty":5,"threshold":20,"topic":"Matrices","prerequisites":[1,2,3,4,5],"prerequisite_weights":[5,5,5,5,5]}

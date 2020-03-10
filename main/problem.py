@@ -2,37 +2,30 @@ import json
 
 class Problem():
 	def __init__(self , path):
-		# problem properties
-		# difficulty
-		# problem text
-		# problem options
-		# correct answer
-		# probelm path
 		self.path = path
-		# self.load_problem()
-		pass
 
 	def load_problem(self):
-		
 		with open(self.path , "r") as f:
 			self.__dict__.update(json.load(f))
-			# print(self.__dict__)
 
 	def display(self):
 		print("----------------------------------------------------------")
 		# print("Topic :",self.topic)
+		print("Problem " , self.problem_no)
 		print(self.question_text)
 		print("Options")
 		print("A :"+self.options["A"] , "\tB :"+self.options["B"], "\tC :"+self.options["C"] , "\tD :"+self.options["D"])		
 		print("Difficulty :",self.difficulty)
-		print("Threshold :",self.threshold)		
+		print("Threshold :",self.threshold)
+		if "prerequisites" in self.__dict__.keys():
+			print("Prerequisite questions :",self.prerequisites)
 		print("----------------------------------------------------------")	
-# load problem from file.
-#display problem
-# display details of problem		
+
 	def __str__(self):
 		return "Question : " + self.question_text + " \n"
+
 if __name__=="__main__":
-	p = Problem("./problems/problem1.json")
+	p = Problem("./problems/problem4.json")
 	p.load_problem()
 	p.display()
+	# print(type(p.prerequisites))
